@@ -4,6 +4,7 @@
 
 - [ ] script for db syncing
 - [ ] update take screenshots file
+- [ ] update mantine to v8
 
 ## 1.0 setup
 
