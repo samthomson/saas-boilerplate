@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.ci
+    ports:
+      - "5002:5002"
+      - "6001:6001"
+    env_file:
+      - .env.ci
+    # volumes:
+    #   - ./app:/app
+    depends_on:
+      - ci_db
+    networks:
+      - saas-boilerplate-ci
+
+  ci_db:
+    image: postgres:16
+    restart: always
+    environment:
+      - POSTGRES_DB=ci_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - "5432:5432"
+    networks:
+      - saas-boilerplate-ci
+
+networks:
+  saas-boilerplate-ci:
+    driver: bridge
+
+volumes:
+  pgdata:

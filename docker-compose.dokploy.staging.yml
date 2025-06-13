@@ -1,0 +1,14 @@
+services:
+  app:
+    image: ghcr.io/samthomson/saas-boilerplate-dokploy-staging:latest
+    pull_policy: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`https://staging.domain.com`)"
+      - "traefik.http.services.app.loadbalancer.server.port=6001" 
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls=true"  
+      - "traefik.http.services.app.loadbalancer.healthcheck.path=/health"
+      - "traefik.http.services.app.loadbalancer.healthcheck.interval=10s"
+      - "traefik.http.services.app.loadbalancer.healthcheck.timeout=5s"
+    restart: always

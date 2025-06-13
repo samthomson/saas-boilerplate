@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    command:
+      - sh
+      - -c
+      - |
+        cd ./client && yarn dev & 
+        cd ./server && yarn dev
+    ports:
+      - "5002:5173"
+      - "6001:6001"
+    volumes:
+      - ./app:/app
+    env_file:
+      - .env.development
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      - POSTGRES_DB=saas_boilerplate
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:

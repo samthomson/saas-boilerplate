@@ -1,0 +1,19 @@
+app/client/node_modules
+# .env.ci
+.env.staging
+.env.production
+.env.development
+.env.dokploy
+node_modules/
+*.tsbuildinfo
+*.d.ts
+!**/vite-env.d.ts
+vite.config.js
+
+app/server/dist
+app/server/webhooks/
+app/server/test-emails/*
+!app/server/test-emails/.gitkeep
+
+app/server/screenshots/*
+.env.staging.dokploy

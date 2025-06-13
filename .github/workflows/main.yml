@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  push:
+    branches-ignore:
+      - staging-branch
+
+jobs:
+  client-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+      
+      - name: Install server dependencies
+        run: cd app/server && yarn install --frozen-lockfile
+      
+      - name: Install client dependencies
+        run: cd app/client && yarn install --frozen-lockfile
+      
+      - name: Build client
+        run: cd app/client && yarn run build
+      
+      - name: Lint client
+        run: cd app/client && yarn run lint
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Start containers
+        run: docker compose -f docker-compose.ci.yml up -d
+
+      - name: Run tests inside container
+        run: docker compose -f docker-compose.ci.yml exec app yarn run test
+
+      - name: Stop containers
+        if: always()
+        run: docker compose -f docker-compose.ci.yml down --volumes
+
+  docker-build-image-dokploy-staging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.CI_GITHUB_ACTOR }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push STAGING Docker Image
+        run: |
+          # Write production env file from secret
+          echo "${{ secrets.ENV_DOKPLOY_STAGING }}" > .env
+          
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          docker build \
+            -f Dockerfile.DokployBase \
+            -t ghcr.io/${{ github.repository_owner }}/saas-boilerplate-dokploy-staging:latest \
+            --build-arg ENV_FILE=.env \
+            --build-arg COMMIT_HASH=$COMMIT_HASH \
+            .
+          docker push ghcr.io/${{ github.repository_owner }}/saas-boilerplate-dokploy-staging:latest
+        
+  docker-build-image-dokploy-production:
+    runs-on: ubuntu-latest
+    # needs: [client-build, tests] 
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.CI_GITHUB_ACTOR }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push PRODUCTION Docker Image
+        run: |
+          # Write production env file from secret
+          echo "${{ secrets.ENV_DOKPLOY_PRODUCTION }}" > .env
+          
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          docker build \
+            -f Dockerfile.DokployBase \
+            -t ghcr.io/${{ github.repository_owner }}/saas-boilerplate-dokploy-production:latest \
+            --build-arg ENV_FILE=.env \
+            --build-arg COMMIT_HASH=$COMMIT_HASH \
+            .
+          docker push ghcr.io/${{ github.repository_owner }}/saas-boilerplate-dokploy-production:latest
+
+  merge-to-staging:
+    runs-on: ubuntu-latest
+    needs: [client-build, tests, docker-build-image-dokploy-staging, docker-build-image-dokploy-production]
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: Merge to staging-branch
+        run: |
+          git config --global user.email "github-actions-bot@example.com"
+          git config --global user.name "GitHub Actions Bot"
+          git fetch origin staging-branch
+          git checkout staging-branch
+          # Get the latest commit message from master
+          LATEST_COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s" origin/master)
+          # Use the latest commit message in the merge commit message
+          git merge origin/master --no-ff -m "Merge / deploy -> Staging: $LATEST_COMMIT_MESSAGE"
+          git push origin staging-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

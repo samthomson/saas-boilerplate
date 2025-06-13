@@ -1,0 +1,35 @@
+FROM node:20-alpine 
+
+WORKDIR /app
+
+COPY ./app /app
+
+# Copy env file to client dir for both build and runtime use
+ARG ENV_FILE
+COPY ${ENV_FILE} /app/client/.env
+# Debug: show env file contents
+RUN cat /app/client/.env
+
+# Install dependencies for server
+WORKDIR /app/server
+RUN yarn install
+
+# Install dependencies for client and build with env vars
+WORKDIR /app/client
+RUN yarn install
+# Build with env vars available in same shell context
+RUN set -a && . .env && set +a && yarn run build
+
+# Reset working directory
+WORKDIR /app
+
+EXPOSE 5173
+EXPOSE 5001
+
+# Set the working directory to /app/server
+WORKDIR /app/server
+
+RUN yarn run build-ci
+
+# Command to run on container start - source env vars first
+CMD set -a && . ../client/.env && set +a && yarn run render-start

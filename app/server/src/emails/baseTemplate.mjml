@@ -1,0 +1,57 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family="Arial, sans-serif" />
+      <mj-text font-size="16px" color="#333333" line-height="1.5" />
+      <mj-column width="100%" />
+    </mj-attributes>
+    <mj-style>
+      .branding-color { color: #B30000; } 
+      .content-container { 
+        padding: 20px; 
+        color: #B30000;
+        background-color: #FFF; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); 
+      } 
+      .content-container a { color: #B30000; }
+      .footer{ color: #fff !important; font-weight: 500;}
+    </mj-style>
+  </mj-head>
+  <!-- Using a brighter, more energetic background color -->
+  <mj-body background-color="#B30000">
+    <!-- dark option with a vibrant tone -->
+    <!-- <mj-body background-color="#1E3A5F"> -->
+    <!-- Spacer section to show blue background at top -->
+    <mj-section padding="40px 0 0">
+      <mj-column>
+        <mj-spacer height="1px" />
+      </mj-column>
+    </mj-section>
+
+    <mj-section css-class="content-container">
+      <mj-column>
+        {{#if agencyLogo}}
+        <mj-image src="{{agencyLogo}}" width="200px" height="auto" alt="{{agencyName}} Logo" align="center" padding-bottom="12px" />
+        {{else}}
+        <mj-raw>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto; display: block;">
+            <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z" stroke="#B30000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </mj-raw>
+        {{/if}}
+        <mj-text css-class="branding-color">
+          <mj-raw> {{{content}}} </mj-raw>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding-top="0" css-class="footer">
+      <mj-column>
+        <mj-text align="center" css-class="powered-by">
+          <mj-raw>SAAS Boilerplate ©</mj-raw>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

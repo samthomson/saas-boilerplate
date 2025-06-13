@@ -1,0 +1,26 @@
+name: Manual Production Deploy
+
+on:
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  merge-master-to-production:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for all tags and branches
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions-bot@example.com"
+          git config --global user.name "GitHub Actions Bot"
+
+      - name: Merge master into production-branch
+        run: |
+          git fetch origin
+          git checkout production-branch
+          LATEST_COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s" origin/master)
+          git merge --no-ff origin/master -m "Merge / deploy -> Production: $LATEST_COMMIT_MESSAGE"
+          git push origin production-branch

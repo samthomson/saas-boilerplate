@@ -1,0 +1,70 @@
+/* FullCalendar Custom Styles */
+
+/* Calendar container */
+.guide-calendar-container .fc {
+	font-family: var(--mantine-font-family);
+}
+
+/* Primary buttons (next, prev, today) */
+.guide-calendar-container .fc .fc-button-primary {
+	background-color: var(--mantine-color-brand-6);
+	border-color: var(--mantine-color-brand-7);
+}
+
+.guide-calendar-container .fc .fc-button-primary:hover {
+	background-color: var(--mantine-color-brand-7);
+}
+
+.guide-calendar-container .fc .fc-button-primary:disabled {
+	background-color: var(--mantine-color-brand-3);
+}
+
+/* Today highlight */
+.guide-calendar-container .fc .fc-daygrid-day.fc-day-today {
+	background-color: var(--mantine-color-brand-0);
+}
+
+/* Header cells (days of week) */
+.guide-calendar-container .fc .fc-col-header-cell {
+	padding: 8px 0;
+}
+
+/* Make events clickable */
+.guide-calendar-container .fc .fc-event {
+	cursor: pointer;
+}
+
+/* Unavailable events */
+.guide-calendar-container .fc .unavailable-event {
+	border-left: 3px solid var(--mantine-color-red-7);
+}
+
+/* Trip events */
+.guide-calendar-container .fc .trip-event {
+	border-left: 3px solid var(--mantine-color-brand-7);
+}
+
+/* Calendar title */
+.guide-calendar-container .fc .fc-toolbar-title {
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
+/* Improve event appearance */
+.guide-calendar-container .fc-event {
+	border-radius: 4px;
+	font-size: 0.85rem;
+	line-height: 1.4;
+	padding: 2px 4px;
+}
+
+/* Improve event text contrast */
+.guide-calendar-container .fc-event-title {
+	font-weight: 500;
+}
+
+/* Weekend days */
+.guide-calendar-container .fc-day-sat,
+.guide-calendar-container .fc-day-sun {
+	background-color: var(--mantine-color-gray-0);
+}

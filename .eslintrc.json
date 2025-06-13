@@ -1,0 +1,13 @@
+{
+  "root": true,
+  "overrides": [
+    {
+      "files": ["app/client/**/*"],
+      "extends": "./app/client/.eslintrc.json"
+    },
+    {
+      "files": ["app/server/**/*"],
+      "extends": "./app/server/.eslintrc.json"
+    }
+  ]
+} 

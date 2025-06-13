@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+coverage
+.eslintrc.json
+package.json
+yarn.lock
+.DS_Store 

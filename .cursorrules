@@ -1,0 +1,55 @@
+# Cursor Rules for React Vite + tRPC + Prisma Stack
+
+## General
+
+- Use TypeScript everywhere. Always infer or define explicit types - never use the any type
+- Follow modern JavaScript/TypeScript best practices (ES modules, no `var`).
+- Prefer concise, readable code over verbose solutions.
+- use `satisfies` over `as` if/when casting
+- always be very concise when implementing code for me
+- never edit code that you were not asked to, that is not explicitly relevant and necessary to change for the current task
+- when implementing util functions, check first in the utils dir of either the client or server project that it doesn't already exist. add new util functions to the relevant existing util file, don't create more util files unless sufficiently different in domain from the current files
+- I use yarn not npm
+- do not add code comments
+
+## Frontend (React + Vite)
+
+- Use functional components with React hooks (e.g., useState, useEffect).
+- Prefer arrow functions for component definitions: `const MyComponent = () => {...}`.
+- Avoid class components or outdated React patterns.
+- where posisble break big UIs down into smaller components
+
+## Backend (tRPC + Prisma)
+
+- Validate inputs with Zod: `import { z } from 'zod'` in tRPC procedures when needed.
+- Keep Prisma models in sync with `prisma/schema.prisma` and use generated types.
+- never make external api calls within database transactions. database transactions are only for database queries.
+
+## File Structure
+
+- the project resides in `app`, which contains three folders: `client` for the react/vite front end, `server` for the backend api (which is trpc using prisma for orm), and `shared` where we have some types/consts to be imported in both client/server
+- Frontend files: Place in `client/src/` (e.g., `src/components/`, `src/hooks/`).
+- Backend files: Place in `server/src` (e.g., `server/routers/`, `server/db.ts`).
+- Shared types/consts: Place in `shared`
+
+## Formatting
+
+- Use tab indentation.
+- Prefer single quotes for strings.
+- End files with a newline.
+- Follow Prettier defaults (assume Prettier is in use unless specified).
+
+## Naming Conventions
+
+- Components: PascalCase (e.g., `MyComponent.tsx`).
+- Hooks: camelCase with `use` prefix (e.g., `useMyHook.ts`).
+- tRPC routers: camelCase (e.g., `myRouter`).
+- Prisma models: Follow `prisma/schema.prisma` naming (typically PascalCase).
+
+## help
+
+- do not edit code that isn't directly relevant to what I'm asking you to do. be concise and focussed on exactly the task at hand only
+- don't add loads of pointless commentary - be very sparing.
+- never modify existing commentary unless you have changed the code which the comment covers
+- DO NOT give me commands to re-run the project to test the changes you've made, that is not needed since my project is running constantly and auto-restarts on file changes
+- never change copy in the app unless I have told you to

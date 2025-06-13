@@ -1,0 +1,21 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY ./app /app
+
+# Install dependencies for server
+WORKDIR /app/server
+RUN yarn install
+
+# Install dependencies for client
+WORKDIR /app/client
+RUN yarn install
+RUN yarn run build
+
+# Reset working directory
+WORKDIR /app/server
+
+# Generate Prisma client and run migrations
+RUN npx prisma generate
+CMD npx prisma migrate deploy && yarn run prod-start 
